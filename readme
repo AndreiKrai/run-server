@@ -1,0 +1,5 @@
+# Збірка та запуск
+docker-compose up --build
+
+# Запуск у фоновому режимі
+# docker-compose up -d
