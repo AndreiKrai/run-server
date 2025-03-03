@@ -2,20 +2,26 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Копіюємо файли залежностей
+# Install dependencies first
 COPY package*.json ./
-
-# Встановлюємо залежності
 RUN npm install
 
-# Копіюємо решту файлів проєкту
+# Copy Prisma schema
+COPY prisma ./prisma/
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Copy the rest of the application
 COPY . .
 
-# Компілюємо TypeScript
+# Build TypeScript code
 RUN npm run build
 
-# Відкриваємо порт
 EXPOSE 3000
 
-# Запускаємо додаток
-CMD ["npm", "start"]
+# Make the startup script executable
+RUN chmod +x scripts/start.sh
+
+# Use the startup script as the entry point
+CMD ["./scripts/start.sh"]

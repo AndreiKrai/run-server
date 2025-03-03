@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import routes from './routes';
+import usersRouter from './routes/users';
+import helloRouter from './routes/hello';
 // Налаштування змінних середовища
 dotenv.config();
 
@@ -18,8 +19,18 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript + Docker API 🚀');
 });
-//using routes
-app.use(routes);
 
+//using routes
+app.get("/hello", helloRouter); //testing api
+app.use("/users", usersRouter);
+
+app.use((req, res) => {
+    res.status(404).json({ message: "Not found" });
+  });
+  
+app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
+const { message, status = 500 } = err as any;
+    res.status(status).json({ message });
+});
 export default app;
 

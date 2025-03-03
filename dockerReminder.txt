@@ -1,0 +1,23 @@
+Starting Containers
+docker-compose up: Starts all services defined in docker-compose.yml
+docker-compose up -d: Runs containers in the background
+docker-compose up --build: Forces rebuilding of images before starting
+
+Stopping Containers
+docker-compose down: Stops and removes containers and networks
+docker-compose down -v: Same as above but also removes volumes (database data)
+docker-compose stop: Just stops containers without removing them
+
+View logs
+docker-compose logs          # View all logs
+docker-compose logs -f       # Follow log output
+docker-compose logs app      # View specific service logs
+
+Container management
+docker-compose ps            # List running containers
+docker-compose restart      # Restart all services
+docker-compose restart app  # Restart specific service
+
+Execute commands
+docker-compose exec app sh   # Open shell in app container
+docker-compose exec db psql -U postgres  # Connect to database

@@ -1,5 +1,10 @@
 # Збірка та запуск
 docker-compose up --build
 
+# Create a new migration
+docker-compose exec app npx prisma migrate dev --name init
+# Or deploy existing migrations
+docker-compose exec app npx prisma migrate deploy
+
 # Запуск у фоновому режимі
 # docker-compose up -d
