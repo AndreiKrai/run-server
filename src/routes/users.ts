@@ -1,10 +1,10 @@
-import { Router, Request, Response } from 'express';
-const router = Router();
-import { register } from '../controllers/users';
-import   ctrlWrapper  from '../helpers/ctrlWrapper';
+import { Router } from "express";
+import { register } from "../controllers/users";
+import ctrlWrapper from "../helpers/ctrlWrapper";
+import validateBody from "../middlewares/validateBody";
+import { registerSchema } from "../schemas/userSchema";
 
-router.post("/register", ctrlWrapper(register));
-// router.post("/login", validateBody(loginSchema), ctrlWrapper(login));
-// router.post("/logout", validateBody(logoutSchema), ctrlWrapper(logout));
+const router = Router();
+router.post("/register", validateBody(registerSchema), ctrlWrapper(register));
 
 export default router;
