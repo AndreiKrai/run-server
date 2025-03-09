@@ -4,24 +4,58 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
 
 model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  password   String   
-  name       String?  
-  secondName String?  
-  avatarURL  String?  
-  token      String?  
-  verify     Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                    Int       @id @default(autoincrement())
+  email                 String    @unique
+  password              String
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  emailVerificationToken String?
+  emailVerified         Boolean   @default(false)
+
+  // Social accounts
+  facebook              String?
+  google                String?
+
+  // Tokens for oauth
+  tokens                Token[]
+  
+  // Profile information
+  profile               Profile?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+// Token model for storing OAuth tokens
+model Token {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  kind      String   // e.g., "access", "refresh"
+  accessToken String
+  tokenType  String?
+  expiresAt  DateTime?
+  scope      String?
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, kind])
+}
+
+// Profile model for storing user profile information
+model Profile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  name      String?
+  secondName String?
+  gender    String?
+  location  String?
+  website   String?
+  picture   String?
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

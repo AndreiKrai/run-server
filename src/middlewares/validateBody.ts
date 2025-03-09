@@ -1,17 +1,20 @@
 import { Request, Response, NextFunction } from "express";
-import { AnyZodObject } from "zod";
+import { AnyZodObject, z } from "zod";
+import { RequestHandler } from "express";
 import RequestError from "../utils/errors";
 
-const validateBody = (schema: AnyZodObject) => {
+const validateBody = (schema: AnyZodObject): RequestHandler => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await schema.parseAsync(req.body);
       next();
     } catch (error) {
-      if (error instanceof Error) {
-         RequestError(res, 400, error.message);return
+      if (error instanceof z.ZodError) {
+        RequestError(res, 400, error.issues[0].message);
+        return;
       }
-       RequestError(res, 400, 'Invalid request body');return
+      RequestError(res, 400, "Invalid request body");
+      return;
     }
   };
 };
