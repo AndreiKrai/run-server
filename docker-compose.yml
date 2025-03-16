@@ -6,31 +6,28 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - PORT=3000
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/run4fun?schema=public
-    volumes:
-      - ./src:/app/src
+      - PORT=3000
     depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
+      - db
+    # For development, enable volume mount
+    # For production, you might want to comment these out
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/dist  # Preserve the dist directory from container
+
 
   db:
     image: postgres:15
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=run4fun
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      
+
 volumes:
   postgres-data:

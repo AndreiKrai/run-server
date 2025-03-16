@@ -1,27 +1,22 @@
 FROM node:18-alpine
 
+# Install netcat for the database connection check
+RUN apk add --no-cache netcat-openbsd
+
 WORKDIR /app
 
-# Install dependencies first
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy Prisma schema
+# Copy Prisma schema first (separate from other files)
 COPY prisma ./prisma/
-
-# Generate Prisma Client
-RUN npx prisma generate
 
 # Copy the rest of the application
 COPY . .
 
-# Build TypeScript code
-RUN npm run build
+# Make start script executable
+RUN chmod +x ./scripts/start.sh
 
-EXPOSE 3000
-
-# Make the startup script executable
-RUN chmod +x scripts/start.sh
-
-# Use the startup script as the entry point
+# We'll generate Prisma client during container startup
 CMD ["./scripts/start.sh"]

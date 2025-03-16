@@ -6,5 +6,6 @@ docker-compose exec app npx prisma migrate dev --name init
 # Or deploy existing migrations
 docker-compose exec app npx prisma migrate deploy
 
+docker-compose down
 # Запуск у фоновому режимі
 # docker-compose up -d
