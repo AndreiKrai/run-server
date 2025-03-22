@@ -52,6 +52,13 @@ export interface VerificationParams {
   emailVerificationToken: string;
 }
 
+/**
+ * Auth Request type definition that includes user property 
+ */
+export interface AuthRequest extends Request {
+  user?: any;
+  token?: string;
+}
 // =================== Response Data Types ===================
 
 /**
@@ -85,6 +92,11 @@ export interface LogoutResponseData {
   message: string;
 }
 
+export interface OAuthResponseData {
+  token: string;
+  user: SafeUser;
+  provider: string;
+}
 // =================== API Response Wrapper ===================
 
 /**
@@ -95,6 +107,7 @@ export interface ErrorResponse {
   statusCode: number;
   details?: any;
 }
+
 
 /**
  * API response wrapper type - discriminated union
@@ -109,3 +122,4 @@ export type LoginApiResponse = ApiResponse<LoginResponseData>;
 export type VerificationApiResponse = ApiResponse<VerificationResponseData>;
 export type LogoutApiResponse = ApiResponse<LogoutResponseData>;
 export type UserApiResponse = ApiResponse<SafeUser>;
+export type OAuthApiResponse = ApiResponse<OAuthResponseData>;

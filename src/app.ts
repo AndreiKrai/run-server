@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth";
 import helloRouter from "./routes/hello";
+import setupPassport from './services/google';
 // Налаштування змінних середовища
 dotenv.config();
 
@@ -10,11 +11,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Setup Passport
+const passport = setupPassport();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// Google OAuth
+app.use(passport.initialize());
 // test
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript + Docker API 🚀");

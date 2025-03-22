@@ -22,11 +22,17 @@ model User {
   emailVerificationToken String?  @unique
   emailVerified         Boolean   @default(false)
 
-  // Social accounts
-  facebook              String?
-  google                String?
+  // OAuth provider IDs
+  googleId              String?   @unique
+  facebookId            String?   @unique
+  appleId               String?   @unique
+  githubId              String?   @unique
 
-  // Tokens for oauth
+  // OAuth metadata
+  provider              String?   // "local", "google", "facebook", etc.
+  lastLogin             DateTime?
+  
+  // Tokens for auth
   tokens                Token[]
   
   // Profile information
@@ -37,33 +43,50 @@ model User {
 
 // Token model for storing OAuth tokens
 model Token {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  kind      String   // e.g., "access", "refresh"
-  accessToken String
-  tokenType  String?
-  expiresAt  DateTime?
-  scope      String?
-  user      User     @relation(fields: [userId], references: [id])
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  kind         String    // "access", "refresh", "oauth_google", etc.
+  accessToken  String
+  refreshToken String?   // For OAuth refresh tokens
+  tokenType    String?   // "bearer", etc.
+  expiresAt    DateTime?
+  scope        String?
+  provider     String?   // "google", "facebook", etc.
+  raw          Json?     // Store additional provider-specific data
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   
-  @@unique([userId, kind])
+  @@unique([userId, kind, provider])
 }
 
 // Profile model for storing user profile information
 model Profile {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  name      String?
-  secondName String?
-  gender    String?
-  location  String?
-  website   String?
-  picture   String?
-  user      User     @relation(fields: [userId], references: [id])
+  id             Int       @id @default(autoincrement())
+  userId         Int       @unique
+  name           String?
+  firstName      String?
+  lastName       String?   
+  displayName    String?   // For social profiles that have a display name
+  gender         String?
+  birthdate      DateTime?
+  location       String?
+  website        String?
+  bio            String?   // Short bio/description
+  picture        String?   // Profile picture URL
+  coverPhoto     String?   // Cover/banner image URL
+  phoneNumber    String?
+  language       String?   // Preferred language
+  timezone       String?
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Social media handles
+  twitter        String?
+  instagram      String?
+  linkedin       String?
+  
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }

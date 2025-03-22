@@ -16,6 +16,7 @@ import {
   LoginResponseData,
   VerificationResponseData,
   LogoutResponseData,
+  OAuthApiResponse,
 } from "../types/APIResponse";
 import {
   TypedBodyHandler,
@@ -217,5 +218,32 @@ const logout: TypedBodyHandler<{}, LogoutResponseData> = async (
   );
 };
 
-const auth = { register, verification, login, logout };
+/**
+ * Handle Google OAuth callback
+ */
+const googleCallback: TypedBodyHandler<{}, OAuthApiResponse> = async (
+  req,
+  res,
+  next
+) => {
+  // The user is already set by passport middleware
+  const user: User = req.user;
+
+  if (!user) {
+    return ApiResponder.error(res, 401, "Authentication failed");
+  }
+
+  // Generate JWT token
+  const token = jwtService.createToken(user);
+  await jwtService.saveToken(token, user.id);
+
+  // Get the frontend URL from environment or use default
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3001";
+
+  // Option 2: Redirect with token (typical for web apps)
+  return res.redirect(
+    `${frontendUrl}/auth/callback?token=${token}&provider=google`
+  );
+};
+const auth = { register, verification, login, logout, googleCallback };
 export default auth;
