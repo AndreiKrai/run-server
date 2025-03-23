@@ -1,0 +1,62 @@
+import { ApiResponse } from "../wrapper";
+
+// =================== User Types ===================
+/**
+ * User Profile information
+ */
+export interface UserProfile {
+  name: string | null;
+  gender?: string | null;
+  location?: string | null;
+  website?: string | null;
+  picture?: string | null;
+}
+
+/**
+ * Safe User data (no sensitive information)
+ */
+export interface SafeUser {
+  id: number;
+  email: string;
+  emailVerified: boolean;
+  profile: UserProfile | null;
+}
+
+// =================== Response Data Types ===================
+
+/**
+ * Registration response data
+ */
+export interface RegisterResponseData {
+  user: SafeUser;
+}
+
+/**
+ * Verification response data
+ */
+export interface VerificationResponseData {
+  message: string;
+  verified: boolean;
+  user: SafeUser;
+}
+
+/**
+ * Login response data
+ */
+export interface LoginResponseData {
+  token: string;
+  user: SafeUser;
+}
+
+/**
+ * Logout response data
+ */
+export interface LogoutResponseData {
+  message: string;
+}
+
+export interface OAuthResponseData {
+  token: string;
+  user: SafeUser;
+  provider: string;
+}

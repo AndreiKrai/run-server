@@ -4,20 +4,12 @@ import bcrypt from "bcryptjs";
 import emailService from "../services/sendEmail/emailServise";
 import { PrismaClient } from "@prisma/client";
 import jwtService from "../services/jwt";
+import * as Req from "../types/request";
+import * as Res from "../types/response/cntrlResponse";
 
 // Define User type based on Prisma Client
 type User = Awaited<ReturnType<PrismaClient["user"]["findUnique"]>> & {};
 
-import {
-  RegisterRequestBody,
-  LoginRequestBody,
-  VerificationParams,
-  RegisterResponseData,
-  LoginResponseData,
-  VerificationResponseData,
-  LogoutResponseData,
-  OAuthApiResponse,
-} from "../types/APIResponse";
 import {
   TypedBodyHandler,
   TypedParamsHandler,
@@ -30,8 +22,8 @@ const { BASE_URL } = process.env;
  * Register a new user
  */
 const register: TypedBodyHandler<
-  RegisterRequestBody,
-  RegisterResponseData
+  Req.Auth.Register["body"],
+  Res.Auth.Register
 > = async (req, res, next) => {
   const { email, name, password } = req.body;
 
@@ -75,7 +67,7 @@ const register: TypedBodyHandler<
   }
 
   // Return sanitized user data
-  return ApiResponder.success<RegisterResponseData>(
+  return ApiResponder.success<Res.Auth.Register>(
     res,
     {
       user: {
@@ -95,8 +87,8 @@ const register: TypedBodyHandler<
  * Verify a user's email using verification token
  */
 const verification: TypedParamsHandler<
-  VerificationParams,
-  VerificationResponseData
+  Req.Auth.Verification["params"],
+  Res.Auth.Verification
 > = async (req, res, next) => {
   const { emailVerificationToken } = req.params;
 
@@ -123,7 +115,7 @@ const verification: TypedParamsHandler<
     },
     include: { profile: true },
   });
-  return ApiResponder.success<VerificationResponseData>(
+  return ApiResponder.success<Res.Auth.Verification>(
     res,
     {
       message: "Email verification successful. You can now login.",
@@ -145,7 +137,7 @@ const verification: TypedParamsHandler<
 /**
  * Log in a user
  */
-const login: TypedBodyHandler<LoginRequestBody, LoginResponseData> = async (
+const login: TypedBodyHandler<Req.Auth.Login["body"], Res.Auth.Login> = async (
   req,
   res,
   next
@@ -173,7 +165,7 @@ const login: TypedBodyHandler<LoginRequestBody, LoginResponseData> = async (
   await jwtService.saveToken(token, user.id);
 
   // Return success response
-  return ApiResponder.success<LoginResponseData>(
+  return ApiResponder.success<Res.Auth.Login>(
     res,
     {
       token,
@@ -194,7 +186,7 @@ const login: TypedBodyHandler<LoginRequestBody, LoginResponseData> = async (
 /**
  * Log out a user
  */
-const logout: TypedBodyHandler<{}, LogoutResponseData> = async (
+const logout: TypedBodyHandler<{}, Res.Auth.Logout> = async (
   req,
   res,
   next
@@ -211,7 +203,7 @@ const logout: TypedBodyHandler<{}, LogoutResponseData> = async (
   await jwtService.deleteAllAccessTokens(userId);
 
   // Return success response
-  return ApiResponder.success<LogoutResponseData>(
+  return ApiResponder.success<Res.Auth.Logout>(
     res,
     { message: "Logout successful" },
     200
@@ -221,7 +213,7 @@ const logout: TypedBodyHandler<{}, LogoutResponseData> = async (
 /**
  * Handle Google OAuth callback
  */
-const googleCallback: TypedBodyHandler<{}, OAuthApiResponse> = async (
+const googleCallback: TypedBodyHandler<{}, Res.Auth.OAuth> = async (
   req,
   res,
   next

@@ -37,6 +37,7 @@ model User {
   
   // Profile information
   profile               Profile?
+  addresses             Address[]
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 }
@@ -89,4 +90,29 @@ model Profile {
   
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+// Address model for storing user addresses
+model Address {
+  id          Int       @id @default(autoincrement())
+  userId      Int       // Foreign key to User
+  type        String?   // "home", "work", "gym", "race", etc.
+  street      String?   // Street address line 1
+  city        String?
+  state       String?   // State/Province/Region
+  postalCode  String?
+  country     String?
+  
+  // Meta information
+  isPrimary   Boolean   @default(false)
+  label       String?   // Custom label ("Home", "Work", "My Gym", etc.)
+  
+  // Relation to User
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([userId])
 }
