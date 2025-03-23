@@ -5,7 +5,7 @@ import emailService from "../services/sendEmail/emailServise";
 import { PrismaClient } from "@prisma/client";
 import jwtService from "../services/jwt";
 import * as Req from "../types/request";
-import * as Res from "../types/response/cntrlResponse";
+import * as Res from "../types/response/contrResp";
 
 // Define User type based on Prisma Client
 type User = Awaited<ReturnType<PrismaClient["user"]["findUnique"]>> & {};
@@ -137,11 +137,10 @@ const verification: TypedParamsHandler<
 /**
  * Log in a user
  */
-const login: TypedBodyHandler<Req.Auth.Login["body"], Res.Auth.Login> = async (
-  req,
-  res,
-  next
-) => {
+const login: TypedBodyHandler<
+  Req.Auth.Login["body"],
+  Res.Auth.Login
+> = async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find user by email

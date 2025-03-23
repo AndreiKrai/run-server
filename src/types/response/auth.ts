@@ -1,4 +1,4 @@
-import { ApiResponse } from "../wrapper";
+import { ApiResponse } from "./wrapper";
 
 // =================== User Types ===================
 /**
@@ -59,4 +59,26 @@ export interface OAuthResponseData {
   token: string;
   user: SafeUser;
   provider: string;
+}
+
+// ===================API Response Data Types (client get that)===================
+
+export namespace APIAuth  {
+  export type Register = ApiResponse<RegisterResponseData>;
+  export type Login = ApiResponse<LoginResponseData>;
+  export type Verification = ApiResponse<VerificationResponseData>;
+  export type Logout = ApiResponse<LogoutResponseData>;
+  export type User = ApiResponse<SafeUser>;
+  export type OAuth = ApiResponse<OAuthResponseData>;
+}
+
+// ===================Controller Response Data Types ===================
+
+export namespace CntrAuth  {
+  export type Register = RegisterResponseData;
+  export type Login = LoginResponseData;
+  export type Verification = VerificationResponseData;
+  export type Logout = LogoutResponseData;
+  export type User = SafeUser;
+  export type OAuth = OAuthResponseData;
 }
