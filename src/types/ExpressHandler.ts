@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { ApiResponse } from "./APIResponse";
+import { ApiResponse } from "./response/wrapper";
 
 /**
  * Base Express handler type without response type checking
  */
 export type ExpressHandler = (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ) => Promise<void>;
 
@@ -60,7 +60,7 @@ export const ApiResponder = {
     res.status(statusCode).json({
       success: true,
       data,
-      message
+      message,
     });
   },
 
@@ -77,7 +77,7 @@ export const ApiResponder = {
       success: false,
       error,
       statusCode,
-      details
+      details,
     });
-  }
+  },
 };

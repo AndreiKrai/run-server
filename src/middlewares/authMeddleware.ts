@@ -2,20 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwtService from "../services/jwt";
 import RequestError from "../utils/errors";
 import prisma from "../services/prisma";
-import { PrismaClient } from "@prisma/client";
 
-// Define User type based on Prisma Client
-type User = Awaited<ReturnType<PrismaClient["user"]["findUnique"]>> & {};
-
-// Use proper User type instead of any
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-      token?: string;  // Add token to request for logout
-    }
-  }
-}
 
 const authMiddleware = async (
   req: Request,

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRouter from "./routes/auth";
 import helloRouter from "./routes/hello";
 import setupPassport from './services/google';
+import userRoutes from './routes/user';
 // Налаштування змінних середовища
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get("/", (req: Request, res: Response) => {
 //using routes
 app.use("/hello", helloRouter);
 app.use("/auth", authRouter);
+app.use("/users", userRoutes);
 
 // Debug request path - add this to diagnose routing issues
 app.use((req: Request, res: Response, next) => {
