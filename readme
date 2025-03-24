@@ -9,3 +9,13 @@ docker-compose exec app npx prisma migrate deploy
 docker-compose down
 # Запуск у фоновому режимі
 # docker-compose up -d
+
+
+/events                  # List/create events
+/events/:id              # Get/update/delete a specific event
+/events/:id/categories   # List/create categories for an event
+/categories/:id          # Get/update/delete a specific category
+/participants            # List/create participants
+/participants/:id        # Get/update/delete a specific participant
+/results                 # List/create results
+/results/:id             # Get/update/delete a specific result

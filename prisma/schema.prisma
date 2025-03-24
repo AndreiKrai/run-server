@@ -38,6 +38,11 @@ model User {
   // Profile information
   profile               Profile?
   addresses             Address[]
+
+  // Event participation
+  eventParticipation    Participant[] // Events the user registered for
+  eventResults          Result[]      // Results submitted by the user
+
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 }
@@ -116,3 +121,154 @@ model Address {
   
   @@index([userId])
 }
+
+// Event model for running events (marathons, etc.)
+model Event {
+  id              Int         @id @default(autoincrement())
+  name            String
+  description     String?     @db.Text
+  eventType       String      // "marathon", "half-marathon", "5k", "10k", "trail", "ultra"
+  status          String      @default("upcoming") // "upcoming", "active", "completed", "cancelled"
+  
+  // Date information
+  eventDate       DateTime    // Main event date
+  registrationStartDate DateTime  // When registration opens
+  registrationEndDate   DateTime  // When registration closes
+  resultsEntryDeadline  DateTime? // Deadline for submitting results
+  
+  // Location information
+  location        String?     // City or venue name
+  address         String?
+  city            String?
+  state           String?
+  country         String?
+  postalCode      String?
+  
+  // Event details
+  featuredImage   String?     // URL to main event image
+  bannerImage     String?     // URL to banner image
+  
+  // Payment information
+  basePrice       Float       // Base registration price
+  currency        String      @default("USD") // Currency code
+  
+  // Relations
+  categories      EventCategory[]  // Different categories for the event
+  participants    Participant[]    // Registrations for this event
+  results         Result[]         // Results submitted for this event
+  
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@index([eventDate])
+  @@index([eventType])
+  @@index([status])
+}
+
+// Categories within an event (by distance, age group, etc.)
+model EventCategory {
+  id              Int         @id @default(autoincrement())
+  eventId         Int
+  name            String      // e.g., "Marathon - Men 18-34", "5K - Women 35-44"
+  description     String?
+  distance        Float       // Distance in kilometers
+  
+  // Category criteria
+  gender          String?     // "male", "female", "any"
+  minAge          Int?        // Minimum age
+  maxAge          Int?        // Maximum age
+    
+  // Relations
+  event           Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  participants    Participant[] // People registered in this category
+  results         Result[]    // Results for this category
+  
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@index([eventId])
+}
+
+// Participant registration model
+model Participant {
+  id              Int         @id @default(autoincrement())
+  userId          Int         // User who registered
+  eventId         Int         // Event they registered for
+  categoryId      Int         // Which category they registered in
+  
+  // Registration details
+  registrationDate DateTime   @default(now())
+  status          String      @default("pending") // "pending", "confirmed", "cancelled"
+  bibNumber       String?     // Assigned race bib number
+  
+  // Payment information
+  paymentStatus   String      @default("unpaid") // "unpaid", "paid", "refunded"
+  amountPaid      Float       // Amount actually paid
+  transactionId   String?     // Payment provider transaction ID
+  paymentDate     DateTime?   // When payment was completed
+    
+  // Other registration fields
+  shirtSize       String?     // "XS", "S", "M", "L", "XL", etc.
+  estimatedFinishTime String?  // User's estimated finish time
+  notes           String?     // Any special notes or requests
+  
+  // Relations
+  user            User        @relation(fields: [userId], references: [id])
+  event           Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category        EventCategory @relation(fields: [categoryId], references: [id])
+  result          Result?     // Optional relation to submitted result
+  
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@unique([eventId, userId, categoryId]) // One registration per user per category per event
+  @@index([userId])
+  @@index([eventId])
+  @@index([categoryId])
+}
+
+// Results model for tracking finish times and rankings
+model Result {
+  id              Int         @id @default(autoincrement())
+  participantId   Int         @unique // Links to participant registration
+  eventId         Int         // The event
+  categoryId      Int         // The category
+  userId          Int         // User who completed the race
+  
+  // Time information
+  finishTime      String      // Finish time in HH:MM:SS format
+  timeInSeconds   Int         // Calculated time in seconds for sorting
+  
+  // Result details
+  verificationMethod String   @default("self-reported") // "self-reported", "official", "verified"
+  verificationImage String?   // Optional URL to proof image (screenshot of tracking app, etc.)
+  notes           String?     // Additional notes
+  
+  // Status
+  status          String      @default("pending") // "pending", "verified", "disputed", "disqualified"
+  
+  // Position/ranking (filled in by admin or automatically)
+  overallPlace    Int?        // Overall place in event
+  categoryPlace   Int?        // Place within category
+  
+  // Relations
+  participant     Participant @relation(fields: [participantId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+  event           Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category        EventCategory @relation(fields: [categoryId], references: [id])
+  
+  // Timestamps
+  submittedAt     DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  verifiedAt      DateTime?   // When result was verified by organizer
+  
+  @@index([eventId])
+  @@index([categoryId])
+  @@index([userId])
+  @@index([status])
+}
+
+
