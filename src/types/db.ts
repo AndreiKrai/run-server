@@ -1,6 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+  SUPER_ADMIN = "superadmin"
+}
+
 /**
  * User model type with all fields
  */
@@ -18,6 +24,7 @@ export type User = {
   githubId: string | null;
   provider: string | null;
   lastLogin: Date | null;
+  role: UserRole | null;
   createdAt: Date;
   updatedAt: Date;
   

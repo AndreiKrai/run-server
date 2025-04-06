@@ -45,6 +45,13 @@ export type TypedFullHandler<TParams, TReq, TRes> = (
 ) => Promise<void>;
 
 /**
+ * Type for handlers with typed query parameters and response
+ * Used for GET requests with query string parameters
+ */
+export type TypedQueryHandler<Query, ResponseData> = 
+  (req: Request & { query: Query }, res: Response, next: NextFunction) => 
+    Promise<void>; // Match the return type expected by ctrlWrapper
+/**
  * Helper functions for sending consistent API responses
  */
 export const ApiResponder = {
