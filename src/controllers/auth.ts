@@ -1,14 +1,10 @@
 import prisma from "../services/prisma";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
-import emailService from "../services/sendEmail/emailServise";
-import { PrismaClient } from "@prisma/client";
+// import emailService from "../services/sendEmail/emailServise";
 import jwtService from "../services/jwt";
 import * as Req from "../types/request";
 import * as Res from "../types/response/contrResp";
-
-// Define User type based on Prisma Client
-type User = Awaited<ReturnType<PrismaClient["user"]["findUnique"]>> & {};
 
 import {
   TypedBodyHandler,
@@ -16,7 +12,7 @@ import {
   ApiResponder,
 } from "../types/ExpressHandler";
 
-const { BASE_URL } = process.env;
+// const { BASE_URL } = process.env;
 
 /**
  * Register a new user
@@ -137,10 +133,11 @@ const verification: TypedParamsHandler<
 /**
  * Log in a user
  */
-const login: TypedBodyHandler<
-  Req.Auth.Login["body"],
-  Res.Auth.Login
-> = async (req, res, next) => {
+const login: TypedBodyHandler<Req.Auth.Login["body"], Res.Auth.Login> = async (
+  req,
+  res,
+  next
+) => {
   const { email, password } = req.body;
 
   // Find user by email
@@ -195,7 +192,7 @@ const logout: TypedBodyHandler<{}, Res.Auth.Logout> = async (
     return ApiResponder.error(res, 401, "Not authenticated");
   }
 
-  const user = req.user as User;
+  const user = req.user;
   const userId = user.id;
 
   // Delete user's access tokens
@@ -218,11 +215,10 @@ const googleCallback: TypedBodyHandler<{}, Res.Auth.OAuth> = async (
   next
 ) => {
   // The user is already set by passport middleware
-  const user: User = req.user;
-
-  if (!user) {
+  if (!req.user) {
     return ApiResponder.error(res, 401, "Authentication failed");
   }
+  const user = req.user;
 
   // Generate JWT token
   const token = jwtService.createToken(user);

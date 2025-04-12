@@ -271,6 +271,10 @@ const createCategory: TypedFullHandler<
   const eventId = parseInt(id);
   const categoryData = req.body;
   
+
+  console.log("Creating category for event:", eventId);
+  console.log("Category data:", categoryData);
+  
   // Check if event exists
   const existingEvent = await prisma.event.findUnique({
     where: { id: eventId }
@@ -288,6 +292,8 @@ const createCategory: TypedFullHandler<
     }
   });
   
+  console.log("Created category:", category);
+    
   return ApiResponder.success<Res.Events.CreateCategory>(
     res,
     {

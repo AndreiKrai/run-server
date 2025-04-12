@@ -17,6 +17,7 @@ router.put(
 );
 
 // Update profile picture
+//it get url ,but should get img, need to implement server side getting url
 router.patch(
   "/picture",
   validateBody(profileSchema.updatePicture),

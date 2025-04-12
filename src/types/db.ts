@@ -24,7 +24,7 @@ export type User = {
   githubId: string | null;
   provider: string | null;
   lastLogin: Date | null;
-  role: UserRole | null;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   

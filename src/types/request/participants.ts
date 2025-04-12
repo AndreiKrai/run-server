@@ -4,9 +4,8 @@ import {
   UpdateParticipantBody, 
   RegisterBody,
   UpdateRegistrationBody
-} from "../../schemas/participant";
+} from "../../schemas/partisipant";
 
-export namespace Participant {
   // Get all participants with filtering
   export interface GetAll {
     query?: ParticipantFiltersQuery;
@@ -80,4 +79,17 @@ export namespace Participant {
       categoryId: string;
     };
   }
-}
+
+  export interface GetMyRegistrations {
+    query?: {
+      page?: string;
+      limit?: string;
+      status?: "pending" | "confirmed" | "cancelled";
+      eventId?: string;
+    };
+  }
+  export interface Delete {
+    params: {
+      id: string;
+    };
+  }

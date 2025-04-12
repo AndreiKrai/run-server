@@ -7,6 +7,7 @@ import authSchema from "../schemas/authSchema";
 import loginLimiter from "../middlewares/reachLimiter";
 import authMiddleware from "../middlewares/authMeddleware";
 import passport from "passport";
+
 const router = Router();
 
 router.post(

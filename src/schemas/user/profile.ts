@@ -42,7 +42,7 @@ const updateProfile = z.object({
   twitter: shortTextSchema,
   instagram: shortTextSchema,
   linkedin: shortTextSchema
-}).refine(data => Object.keys(data).filter(key => data[key] !== undefined).length > 0, {
+}).refine(data => Object.keys(data).filter(key => data[key as keyof typeof data] !== undefined).length > 0, {
   message: "At least one field must be provided",
   path: ["_all"]
 });

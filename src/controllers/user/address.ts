@@ -17,6 +17,8 @@ const getAllAddresses: TypedBodyHandler<
   Res.User.Address.GetAll
 > = async (req, res, next) => {
   const user = req.user as User;
+  console.log("User ID:", user.id);
+  
   const userId = user.id;
   const limit = req.query?.limit ? parseInt(req.query.limit as string) : 10;
   const offset = req.query?.offset ? parseInt(req.query.offset as string) : 0;

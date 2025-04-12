@@ -58,6 +58,54 @@ export interface ParticipantData {
   } | null;
 }
 
+
+/**
+ * Registration data structure (for user's own registrations)
+ */
+export interface RegistrationData {
+  id: number;
+  eventId: number;
+  categoryId: number;
+  registrationDate: Date;
+  status: string;
+  bibNumber: string | null;
+  paymentStatus: string;
+  amountPaid: number;
+  shirtSize: string | null;
+  estimatedFinishTime: string | null;
+  notes: string | null;
+  
+  // Included relations
+  event?: {
+    id: number;
+    name: string;
+    eventDate: Date;
+    // Other event fields...
+  };
+  category?: {
+    id: number;
+    name: string;
+    distance: number;
+    // Other category fields...
+  };
+  result?: {
+    id: number;
+    finishTime: string;
+    timeInSeconds: number;
+    verificationMethod: string;
+  } | null;
+}
+
+/**
+ * Pagination structure
+ */
+export interface PaginationData {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
 /**
  * Get all participants response
  */
@@ -105,14 +153,18 @@ export interface CancelParticipantResponseData {
  * Register for event response
  */
 export interface RegisterResponseData {
-  registration: ParticipantData;
+  participant: ParticipantData;
   message: string;
-  paymentInfo?: {
-    url: string;
-    amount: number;
-    currency: string;
-  };
 }
+// export interface RegisterResponseData {
+//   registration: ParticipantData;
+//   message: string;
+//   paymentInfo?: {
+//     url: string;
+//     amount: number;
+//     currency: string;
+//   };
+// }
 
 /**
  * Update registration response
@@ -126,10 +178,24 @@ export interface UpdateRegistrationResponseData {
  * Cancel registration response
  */
 export interface CancelRegistrationResponseData {
+  registration: RegistrationData;
   message: string;
 }
 
-export namespace APIParticipant {
+/**
+ * Get my registrations response
+ */
+export interface GetMyRegistrationsResponseData {
+  registration: RegistrationData[];
+  pagination: PaginationData;
+}
+/**
+ * Delete participant response
+ */
+export interface DeleteParticipantResponseData {
+  message: string;
+}
+export namespace APIParticipants {
     export type GetAll = ApiResponse<GetAllParticipantsResponseData>;
     export type Get = ApiResponse<GetParticipantResponseData>;
     export type Create = ApiResponse<CreateParticipantResponseData>;
@@ -138,9 +204,11 @@ export namespace APIParticipant {
     export type Register = ApiResponse<RegisterResponseData>;
     export type UpdateRegistration = ApiResponse<UpdateRegistrationResponseData>;
     export type CancelRegistration = ApiResponse<CancelRegistrationResponseData>;
+    export type GetMyRegistrations = ApiResponse<GetMyRegistrationsResponseData>;
+    export type Delete = ApiResponse<DeleteParticipantResponseData>;
   }
   
-  export namespace CntrParticipant {
+  export namespace CntrParticipants {
     export type GetAll = GetAllParticipantsResponseData;
     export type Get = GetParticipantResponseData;
     export type Create = CreateParticipantResponseData;
@@ -149,4 +217,6 @@ export namespace APIParticipant {
     export type Register = RegisterResponseData;
     export type UpdateRegistration = UpdateRegistrationResponseData;
     export type CancelRegistration = CancelRegistrationResponseData;
+    export type GetMyRegistrations = GetMyRegistrationsResponseData;
+    export type Delete = DeleteParticipantResponseData;
   }

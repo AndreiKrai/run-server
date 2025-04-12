@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwtService from "../services/jwt";
 import RequestError from "../utils/errors";
 import prisma from "../services/prisma";
-
+import { RequestUser } from "../types/db"; 
 
 const authMiddleware = async (
   req: Request,
@@ -58,7 +58,7 @@ const authMiddleware = async (
     }
     
     // Add user and token to request for use in controllers
-    req.user = user;
+    req.user = user as unknown as RequestUser;
     req.token = token;
     
     next();
