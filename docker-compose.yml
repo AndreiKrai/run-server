@@ -4,10 +4,10 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/run4fun?schema=public
-      - PORT=3000
+      - PORT=8000
     depends_on:
       - db
     # For development, enable volume mount
